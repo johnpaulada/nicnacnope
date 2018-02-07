@@ -13,14 +13,14 @@ class Board extends Component {
     </Set>
   }
 
-  renderRow = row => {
-    return <Row>
-      {row.map(this.renderCell)}
+  renderRow = (row, index) => {
+    return <Row key={index}>
+      {row.map(this.renderCell(index))}
     </Row>
   }
 
-  renderCell = content => {
-    return <Cell onClick={() => this.props.do('MOVE', {x: 0, y: 0})}>
+  renderCell = row => (content, cell) => {
+    return <Cell key={`${row}${cell}`} onClick={() => this.props.do('MOVE', {x: row, y: cell})}>
       {content}
     </Cell>
   }

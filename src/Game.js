@@ -11,6 +11,7 @@ const createInitialGameData = () => ({
     [null, null, null],
     [null, null, null]
   ],
+  moveBy: null,
   mode: null,
   players: []
 })
@@ -21,7 +22,7 @@ const characterSwap = {
 }
 
 const createHumanMove = index => (board, x, y) => {
-  if (!board[x][y]) {
+  if (board[x][y] === null) {
     board[x][y] = index
     return [...board]
   }
@@ -44,6 +45,18 @@ const createPlayers = (char, mode) => {
       move: mode === MODE_VERSUS ? createHumanMove(1) : createAiMove
     }
   ]
+}
+
+const getColumns = board => {
+  return [0, 1, 2].map(col => [board[0][col], board[1][col], board[2][col]])
+}
+
+const isVictory = (board, player) => {
+  const rows = board.map(row => row.every(cell => cell === player)).some(row => row)
+  const columns = getColumns(board).map(row => row.every(cell => cell === player)).some(row => row)
+  const answerSet = [rows, columns]
+
+  return answerSet.some(thing => thing)
 }
 
 const initialData = createInitialGameData()
@@ -81,9 +94,12 @@ const gameConfig = {
     'MOVE': {
       to: 'CHECKING',
       action: (data, args) => {
+        const {x, y} = args
+
         return {
           ...data,
-          board: data.players[0].move(data.board, args.x, args.y)
+          moveBy: 0,
+          board: data.players[0].move(data.board, x, y)
         }
       }
     },
@@ -92,9 +108,12 @@ const gameConfig = {
     'MOVE': {
       to: 'CHECKING',
       action: (data, args) => {
+        const {x, y} = args || {}
+
         return {
           ...data,
-          board: data.players[1].move(data.board, args.x, args.y)
+          moveBy: 1,
+          board: data.players[1].move(data.board, x, y)
         }
       }
     },
@@ -134,8 +153,27 @@ const Game = UMW.summon(initialData, gameConfig)
 Game.addSubscriber((state, data) => {
   if (Game.is('VICTORY')) {
     // TODO: Show something nice
+    alert(`Player ${data.moveBy} WINS!`)
+    Game.do('RESET')
+  } else if (Game.is('CHECKING')) {
+    
+    if (isVictory(data.board, data.moveBy)) {
+      Game.do('WIN')
+    } else {
+      if (Game.get('moveBy')) {
+
+        // If player 2 moved last
+        Game.do('TO_PLAYER1')
+      } else {
+  
+        // If player 1 moved last
+        Game.do('TO_PLAYER2')
+      }
+    }
+    
+  } else if (Game.is('PLAYER2_TURN') && data.mode === MODE_SINGLE) {
+    Game.do('MOVE')
   }
-  console.log(data.board)
 })
 
 export default Game
