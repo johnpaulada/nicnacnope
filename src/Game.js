@@ -6,6 +6,8 @@ const MODE_SINGLE = Symbol.for('MODE_SINGLE')
 const MODE_VERSUS = Symbol.for('MODE_VERSUS')
 const CHARACTER_X = Symbol.for('CHARACTER_X')
 const CHARACTER_O = Symbol.for('CHARACTER_O')
+const PLAYER_1     = 0
+const PLAYER_2     = 1
 
 const createInitialGameData = () => ({
   board: [
@@ -33,8 +35,64 @@ const createHumanMove = index => (board, x, y) => {
   return board
 }
 
-const createAiMove = (board, x, y) => {
-  return board
+const getColumns = board => {
+  return [0, 1, 2].map(col => [board[0][col], board[1][col], board[2][col]])
+}
+
+const isVictory = (board, player) => {
+  const checkCell = cell => cell === player
+  const rows      = board.map(row => row.every(checkCell)).some(row => row)
+  const flipped   = getColumns(board)
+  const columns   = flipped.map(row => row.every(checkCell)).some(row => row)
+  const diagonal1 = [board[0][0], board[1][1], board[2][2]]
+  const diagonal2 = [board[0][2], board[1][1], board[2][0]]
+  const diagonals = [diagonal1.every(checkCell), diagonal2.every(checkCell)].some(row => row)
+  const answerSet = [rows, columns, diagonals]
+
+  return answerSet.some(thing => thing)
+}
+
+const isLoss = (board, player) => {
+  return isVictory(board, 1-player)
+}
+
+const isFull = board => {
+  return board.every(row => row.every(cell => cell !== null))
+}
+
+const generateMoves = (board, turn) => {
+  return board.reduce((allVals, row, x) => {
+    const rowVal = row.reduce((vals, cell, y) => {
+      return cell !== null ? vals : [...vals, [...board.slice(0, x), [...board[x].slice(0, y), turn, ...board[x].slice(y+1)], ...board.slice(x+1)]]
+    }, [])
+    return [...allVals, ...rowVal]
+  }, [])
+}
+
+const flip = turn => 1 - turn
+
+const minmax = (board, turn, level, limit, player=PLAYER_2) => {
+  if (isVictory(board)) return 10
+  if (isLoss(board)) return -10
+  if (level >= limit || isFull(board)) return 0
+
+  const moves = generateMoves(board, turn)
+  return moves.reduce((sum, move) => sum + minmax(move, flip(turn), level, limit+1, player), 0)
+}
+
+const createAiMove = (board) => {
+  const LIMIT = 5
+
+  const moves = generateMoves(board, PLAYER_2)
+  // const scores = moves.map(move => minmax(move))
+  // const bestIndex = scores.reduce((result, score, index) => {
+  //   return score > result[1] ? [index, score] : result
+  // }, [0, 0])[0]
+
+  // return moves[bestIndex]
+  console.log(moves)
+
+  return board;
 }
 
 const createPlayers = (char, mode) => {
@@ -48,23 +106,6 @@ const createPlayers = (char, mode) => {
       move: mode === MODE_VERSUS ? createHumanMove(1) : createAiMove
     }
   ]
-}
-
-const getColumns = board => {
-  return [0, 1, 2].map(col => [board[0][col], board[1][col], board[2][col]])
-}
-
-const isVictory = (board, player) => {
-  const checkCell = cell => cell === player
-  const rows = board.map(row => row.every(checkCell)).some(row => row)
-  const flipped = getColumns(board)
-  const columns = flipped.map(row => row.every(checkCell)).some(row => row)
-  const diagonal1 = [board[0][0], board[1][1], board[2][2]]
-  const diagonal2 = [board[0][2], board[1][1], board[2][0]]
-  const diagonals = [diagonal1.every(checkCell), diagonal2.every(checkCell)].some(row => row)
-  const answerSet = [rows, columns, diagonals]
-
-  return answerSet.some(thing => thing)
 }
 
 const initialData = createInitialGameData()
