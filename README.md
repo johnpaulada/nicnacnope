@@ -2,12 +2,12 @@
 A food-themed tic-tac-toe game. Built for FreeCodeCamp.
 
 ## Stack
-- Unlimited Machine Works - My lightweight state machine library.
-- react-umw - Unlimited Machine Works React bindings.
-- Create React App
-- styled-components
+- [Unlimited Machine Works](https://unlimited-machine-works.surge.sh/) - My lightweight state machine library.
+- [react-umw](https://github.com/johnpaulada/react-umw) - Unlimited Machine Works React bindings.
+- [Create React App](https://github.com/facebook/create-react-app) - No config React setup.
+- [styled-components](https://www.styled-components.com/) - I like CSS-in-JS.
 - [Animate.css](https://github.com/daneden/animate.css) - Easy drop-in animations.
-- SweetAlert
+- [SweetAlert](https://sweetalert.js.org/) - A beautiful replacement for alert boxes.
 
 ---
 
