@@ -1,5 +1,9 @@
 import styled from 'styled-components';
 
+const Display = styled.div`
+  position: relative;
+`
+
 const App = styled.div`
   width: 100vw;
   height: 100vh;
@@ -9,6 +13,8 @@ const App = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  transition: all 1s;
+  filter: ${props => props.modalUp ? 'blur(5px)' : 'unset'};
 `
 
 const Set = styled.div`
@@ -27,22 +33,53 @@ const Cell = styled.div`
   display: flex;
   flex: 1;
   justify-content: center;
-  align-items: center;
-  background-color: #7E57C2;
+  align-items: stretch;
+  background-color: #CE93D8;
   margin: 2px;
-  box-shadow: 0 0 10px #B39DDB;
+  box-shadow: 0 0 10px #CE93D8;
   cursor: pointer;
 `
 
 const ControlRow = styled.div`
   display: flex;
+  justify-content: space-around;
+  flex-flow: row wrap;
+`
+
+const Modal = styled.div`
+  position: absolute;
+  display: flex;
+  flex-flow: column wrap;
   justify-content: center;
+  align-items: stretch;
+  width: 100vw;
+  height: 100vh;
+  left: 0;
+  top: 0;
+  background-color: rgba(0, 0, 0, 0.3);
+`
+
+const BigTextButton = styled.a`
+  text-decoration: none;
+  font-size: calc(48pt + 2vw);
+  font-family: 'Permanent Marker';
+  color: #FAFAFA;
+  margin-vertical: 20px;
+  margin-horizontal: 40px;
+  cursor: pointer;
+  transition: all 0.5s;
+  &:hover {
+    transform: translateY(-15%);
+  }
 `
 
 export {
   App,
-  Set,
-  Row,
+  BigTextButton,
   Cell,
-  ControlRow
+  ControlRow,
+  Display,
+  Modal,
+  Row,
+  Set
 }

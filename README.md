@@ -1,3 +1,18 @@
+# NicNacNope
+A food-themed tic-tac-toe game. Built for FreeCodeCamp.
+
+## Stack
+- Unlimited Machine Works - My lightweight state machine library.
+- react-umw - Unlimited Machine Works React bindings.
+- Create React App
+- styled-components
+- [Animate.css](https://github.com/daneden/animate.css) - Easy drop-in animations.
+- SweetAlert
+
+---
+
+## Create React App README
+
 This project was bootstrapped with [Create React App](https://github.com/facebookincubator/create-react-app).
 
 Below you will find some information on how to perform common tasks.<br>

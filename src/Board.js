@@ -3,8 +3,15 @@ import { connect } from 'react-umw'
 
 import {
   App, Set, Row, Cell,
-  ControlRow
+  ControlRow, Display,
+  Modal, BigTextButton
 } from './Styled'
+
+const knife = require('./knife.svg')
+const donut = require('./donut.svg')
+
+const CHARACTER_X = Symbol.for('CHARACTER_X')
+const CHARACTER_O = Symbol.for('CHARACTER_O')
 
 class Board extends Component {
   renderBoard = () => {
@@ -20,21 +27,70 @@ class Board extends Component {
   }
 
   renderCell = row => (content, cell) => {
+    let icon = null
+
+    if (content !== null) {
+      icon = this.props.players[content].character
+
+      if (icon === CHARACTER_X) {
+        icon = knife
+      } else if (icon === CHARACTER_O) {
+        icon = donut
+      }
+    }
     return <Cell key={`${row}${cell}`} onClick={() => this.props.do('MOVE', {x: row, y: cell})}>
-      {content}
+      {icon && <img style={{margin: "10px"}} src={icon} alt="Cell Move" />}
     </Cell>
   }
 
+  onSelectSingle = () => {
+    this.props.do('SELECT_SINGLE')
+  }
+
+  onSelectVersus = () => {
+    this.props.do('SELECT_VERSUS')
+  }
+
+  onSelectX = () => {
+    this.props.do('SELECT_X')
+  }
+
+  onSelectO = () => {
+    this.props.do('SELECT_O')
+  }
+
+  displayPlayerSelection = () =>
+    <ControlRow className={`animated ${this.props.modalUp ? 'bounceInDown' : 'bounceOutUp'}`}>
+      <BigTextButton onClick={this.onSelectSingle}>
+        Single
+      </BigTextButton>
+      <BigTextButton onClick={this.onSelectVersus}>
+        Versus
+      </BigTextButton>
+    </ControlRow>
+
+  displayCharacterSelection = () =>
+    <ControlRow className={`animated ${this.props.modalUp ? 'bounceInDown' : 'bounceOutUp'}`}>
+      <BigTextButton onClick={this.onSelectX}>
+        <img src={knife} width="200" height="200" alt="Knife" />
+      </BigTextButton>
+      <BigTextButton onClick={this.onSelectO}>
+      <img src={donut} width="200" height="200" alt="Donut" />
+      </BigTextButton>
+    </ControlRow>
+
   render() {
-    return <App>
-      {this.renderBoard()}
-      <ControlRow>
-        <button onClick={() => this.props.do('SELECT_SINGLE')}>Single Player</button>
-        <button onClick={() => this.props.do('SELECT_VERSUS')}>Versus Player</button>
-        <button onClick={() => this.props.do('SELECT_X')}>Select X</button>
-        <button onClick={() => this.props.do('SELECT_O')}>Select O</button>
-      </ControlRow>
-    </App>
+    return <Display>
+      <App modalUp={this.props.modalUp}>
+        {this.renderBoard()}
+      </App>
+      {this.props.modalUp && <Modal className={`animated ${this.props.modalUp ? 'fadeIn' : 'fadeOut'}`}>
+        {this.props.is('PLAYER_MODE_SELECTION')
+          && this.displayPlayerSelection()}
+        {this.props.is('CHARACTER_SELECTION')
+          && this.displayCharacterSelection()}
+      </Modal>}
+    </Display>
   }
 }
 
