@@ -72,8 +72,8 @@ const generateMoves = (board, turn) => {
 const flip = turn => 1 - turn
 
 const minmax = (board, turn, level, limit, player=PLAYER_2) => {
-  if (isVictory(board)) return 10
-  if (isLoss(board)) return -10
+  if (isVictory(board, player)) return 10
+  if (isLoss(board, player)) return -10
   if (level >= limit || isFull(board)) return 0
 
   const moves = generateMoves(board, turn)
@@ -81,18 +81,16 @@ const minmax = (board, turn, level, limit, player=PLAYER_2) => {
 }
 
 const createAiMove = (board) => {
-  const LIMIT = 5
+  const LIMIT = 10
 
   const moves = generateMoves(board, PLAYER_2)
-  // const scores = moves.map(move => minmax(move))
-  // const bestIndex = scores.reduce((result, score, index) => {
-  //   return score > result[1] ? [index, score] : result
-  // }, [0, 0])[0]
+  const scores = moves.map(move => minmax(move, PLAYER_2, 1, LIMIT))
+  console.log(scores)
+  const bestIndex = scores.reduce((result, score, index) => {
+    return score > result[1] ? [index, score] : result
+  }, [0, 0])[0]
 
-  // return moves[bestIndex]
-  console.log(moves)
-
-  return board;
+  return moves[bestIndex]
 }
 
 const createPlayers = (char, mode) => {
@@ -231,7 +229,7 @@ Game.addSubscriber((state, data) => {
       }
     }
     
-  } else if (Game.is('PLAYER2_TURN') && data.mode === MODE_SINGLE) {
+  } else if (Game.is('PLAYER2_TURN') && data.mode === MODE_SINGLE && !isFull(data.board)) {
     Game.do('MOVE')
   }
 })
