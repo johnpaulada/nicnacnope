@@ -15,7 +15,11 @@ A food-themed tic-tac-toe game. Built for FreeCodeCamp.
 - [SweetAlert](https://sweetalert.js.org/) - A beautiful replacement for alert boxes.
 - [Hero Patterns](http://www.heropatterns.com/) - Repeating SVG Backgrounds.
 
-## Icon Credits
+## Graphics Credits
+
+Food-based concept by my sister Jade Ada ([@blondiewiththebadhair](https://www.instagram.com/blondiewiththebadhair/)).
+
+### Icons
 - <div>Icons made by <a href="https://www.flaticon.com/authors/pixel-perfect" title="Pixel perfect">Pixel perfect</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a> is licensed by <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0" target="_blank">CC 3.0 BY</a></div>
 
 - <div>Icons made by <a href="http://www.freepik.com" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a> is licensed by <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0" target="_blank">CC 3.0 BY</a></div>
