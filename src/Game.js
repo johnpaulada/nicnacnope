@@ -6,8 +6,8 @@ const MODE_SINGLE = Symbol.for('MODE_SINGLE')
 const MODE_VERSUS = Symbol.for('MODE_VERSUS')
 const CHARACTER_X = Symbol.for('CHARACTER_X')
 const CHARACTER_O = Symbol.for('CHARACTER_O')
-const PLAYER_1     = 0
-const PLAYER_2     = 1
+const PLAYER_1    = 0
+const PLAYER_2    = 1
 
 const createInitialGameData = () => ({
   board: [
@@ -39,6 +39,8 @@ const getColumns = board => {
   return [0, 1, 2].map(col => [board[0][col], board[1][col], board[2][col]])
 }
 
+const flip = turn => 1 - turn
+
 const isVictory = (board, player) => {
   const checkCell = cell => cell === player
   const rows      = board.map(row => row.every(checkCell)).some(row => row)
@@ -53,11 +55,35 @@ const isVictory = (board, player) => {
 }
 
 const isLoss = (board, player) => {
-  return isVictory(board, 1-player)
+  return isVictory(board, flip(player))
 }
 
 const isFull = board => {
   return board.every(row => row.every(cell => cell !== null))
+}
+
+const has2 = (row, player) => {
+  return row.reduce((sum, cell) => {
+    return cell === player ? sum + 1 : player
+  }, 0) === 2
+}
+
+const advantagePoints = (board, player) => {
+  const rows      = board.map(row => has2(row, player))
+  const flipped   = getColumns(board)
+  const columns   = flipped.map(row => has2(row, player))
+  const diagonal1 = [board[0][0], board[1][1], board[2][2]]
+  const diagonal2 = [board[0][2], board[1][1], board[2][0]]
+  const diagonals = [diagonal1, diagonal2].map(row => has2(row, player))
+  const advantages = [...rows, ...columns, ...diagonals]
+
+  return advantages.reduce((sum, advantage) => {
+    return sum + advantage ? 10 : 0
+  }, 0)
+}
+
+const disadvantagePoints = (board, player) => {
+  return advantagePoints(board, player) / 10 * 15 * -1
 }
 
 const generateMoves = (board, turn) => {
@@ -69,23 +95,23 @@ const generateMoves = (board, turn) => {
   }, [])
 }
 
-const flip = turn => 1 - turn
-
 const minmax = (board, turn, level, limit, player=PLAYER_2) => {
-  if (isVictory(board, player)) return 10
-  if (isLoss(board, player)) return -10
+  if (isVictory(board, player)) return 20
+  if (isLoss(board, player)) return -30
   if (level >= limit || isFull(board)) return 0
 
+  const advantage = advantagePoints(board, PLAYER_2)
+  const disadvantage = disadvantagePoints(board, PLAYER_1)
+
   const moves = generateMoves(board, turn)
-  return moves.reduce((sum, move) => sum + minmax(move, flip(turn), level, limit+1, player), 0)
+  return moves.reduce((sum, move) => sum + minmax(move, flip(turn), level, limit+1, player), advantage + disadvantage)
 }
 
 const createAiMove = (board) => {
-  const LIMIT = 10
+  const LIMIT = 8
 
   const moves = generateMoves(board, PLAYER_2)
   const scores = moves.map(move => minmax(move, PLAYER_2, 1, LIMIT))
-  console.log(scores)
   const bestIndex = scores.reduce((result, score, index) => {
     return score > result[1] ? [index, score] : result
   }, [0, 0])[0]
@@ -172,6 +198,12 @@ const gameConfig = {
         return data
       }
     },
+    'RESET': {
+      to: 'PLAYER_MODE_SELECTION',
+      action: (data, args) => {
+        return createInitialGameData()
+      }
+    },
     'TO_PLAYER1': {
       to: 'PLAYER1_TURN',
       action: (data, args) => {
@@ -219,6 +251,13 @@ Game.addSubscriber((state, data) => {
     
     if (isVictory(data.board, data.moveBy)) {
       Game.do('WIN')
+    } else if (isFull(data.board)) {
+      swal({
+        title: "It's a draw!",
+        text: `Let's play another game!`,
+        icon: "success",
+        timer: 3000,
+      }).then(value => Game.do('RESET'))
     } else {
       if (Game.get('moveBy')) {
         // If player 2 moved last

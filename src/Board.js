@@ -7,7 +7,7 @@ import {
   Modal, BigTextButton
 } from './Styled'
 
-const knife = require('./knife.svg')
+const baguettes = require('./baguettes.svg')
 const donut = require('./donut.svg')
 
 const CHARACTER_X = Symbol.for('CHARACTER_X')
@@ -33,7 +33,7 @@ class Board extends Component {
       icon = this.props.players[content].character
 
       if (icon === CHARACTER_X) {
-        icon = knife
+        icon = baguettes
       } else if (icon === CHARACTER_O) {
         icon = donut
       }
@@ -72,7 +72,7 @@ class Board extends Component {
   displayCharacterSelection = () =>
     <ControlRow className={`animated ${this.props.modalUp ? 'bounceInDown' : 'bounceOutUp'}`}>
       <BigTextButton onClick={this.onSelectX}>
-        <img src={knife} width="200" height="200" alt="Knife" />
+        <img src={baguettes} width="200" height="200" alt="Baguettes" />
       </BigTextButton>
       <BigTextButton onClick={this.onSelectO}>
       <img src={donut} width="200" height="200" alt="Donut" />

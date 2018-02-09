@@ -33,7 +33,6 @@ const Cell = styled.div`
   display: flex;
   flex: 1;
   justify-content: center;
-  align-items: stretch;
   background-color: #CE93D8;
   margin: 2px;
   box-shadow: 0 0 10px #CE93D8;
