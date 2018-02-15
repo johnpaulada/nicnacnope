@@ -3,6 +3,7 @@ A food-themed tic-tac-toe game. Built for FreeCodeCamp.
 
 [![forthebadge](http://forthebadge.com/images/badges/built-with-love.svg)](http://forthebadge.com)
 [![forthebadge](http://forthebadge.com/images/badges/uses-js.svg)](http://forthebadge.com)
+[![forthebadge](https://img.shields.io/badge/MADE%20WITH-Unlimited%20Machine%20Works-blue.svg?style=for-the-badge)](http://forthebadge.com)
 
 ![Screenie](./Screenie.png)
 
